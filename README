@@ -1,3 +1,44 @@
-微服务注册中心
+微服务注册中心--集群
 
-注册中心地址：http://10.26.13.116:1111/
+一、增加配置文件application-peer1.properties
+server.port=1111
+eureka.instance.hostname=peer1
+eureka.client.service-url.defaultZone=http://peer2:1112/eureka/,http://peer3:1113/eureka/
+
+二、增加配置文件application-peer2.properties
+server.port=1112
+eureka.instance.hostname=peer2
+eureka.client.service-url.defaultZone=http://peer1:1111/eureka/,http://peer3:1113/eureka/
+
+三、增加配置文件application-peer3.properties
+server.port=1113
+eureka.instance.hostname=peer3
+eureka.client.service-url.defaultZone=http://peer1:1111/eureka/,http://peer2:1112/eureka/
+
+四：application.properties
+spring.profiles.active= peer3
+eureka.instance.prefer-ip-address= true
+eureka.client.register-with-eureka=false
+eureka.client.fetch-registry=false
+
+五、配置host
+127.0.0.1 peer1
+127.0.0.1 peer2
+127.0.0.1 peer3
+
+六：IDEA多实例启动
+
+去掉Single instance only选项即可
+
+修改spring.profiles.active=peer1，启动系统
+修改spring.profiles.active=peer2，启动系统
+修改spring.profiles.active=peer3，启动系统
+
+七：验证
+
+分别访问：
+http://localhost:1111/
+http://localhost:1112/
+http://localhost:1113/
+
+只要在DS Replicas下看到集群节点，则表明部署成功
